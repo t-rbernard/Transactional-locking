@@ -1,4 +1,4 @@
-package Register;
+package register;
 
 public interface RegisterTemplate<T> {
   public int getId();
