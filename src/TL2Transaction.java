@@ -6,16 +6,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class TL2Transaction<T> implements Transaction<T>{
 
-	private ArrayList<Register<T>> lrs;
-	private ArrayList<Register<T>> lws;
+	private ArrayList<TL2Register<T>> lrs;
+	private ArrayList<TL2Register<T>> lws;
+	private ArrayList<TL2Register<T>> lcx;
 	private int birthDate;
-	private static AtomicInteger clock;
-	private TL2Register lcx;
+	private static AtomicInteger clock = new AtomicInteger(0);
+	private boolean commited;
 	
 	public TL2Transaction() {
-		
-		lrs = new ArrayList<Register<T>>();
-		lws = new ArrayList<Register<T>>();
+		lcx = new ArrayList<TL2Register<T>>();
+		lrs = new ArrayList<TL2Register<T>>();
+		lws = new ArrayList<TL2Register<T>>();
+		commited = false;
 	}
 	
 	public void begin() {
@@ -23,49 +25,81 @@ public class TL2Transaction<T> implements Transaction<T>{
 	}
 	
 	public void try_to_commit() throws AbortException{
+		for(TL2Register<T> r1 : lws) 
+			if(!r1.isLocked()) r1.lock();
+		for(TL2Register<T> r2 : lrs) 
+			if(!r2.isLocked()) r2.lock();
 		
-		for(Register<T> register : lrs) {
+		
+		for(TL2Register<T> register : lrs) {
 			if(register.getDate() > birthDate) {
-				
+				for(TL2Register<T> r1 : lws) 
+					if(r1.isLocked()) r1.unlock();
+				for(TL2Register<T> r2 : lrs) 
+					if(r2.isLocked()) r2.unlock();
 				throw new AbortException();
 			}
 		}
+		
 		int commitDate = clock.getAndIncrement();
 		for(Register<T> register : lws) {
-			register.setValueAndDate(v, d);
+			register.setValueAndDate(getLcx(register.getId()).getValue(), commitDate);
 		}
+		
+		for(TL2Register<T> r1 : lws) 
+			if(r1.isLocked()) r1.unlock();
+		for(TL2Register<T> r2 : lrs) 
+			if(r2.isLocked()) r2.unlock();
+		this.commited = true;
 	}
 	
 	public boolean isCommited() {
-		return true;
+		return commited;
 	}
 	
 	public void addLrs(Register<T> r) {
-		lrs.add(r);
+		lrs.add((TL2Register<T>)r);
 	}
 	
 	public void addLws(Register<T> r) {
-		lws.add(r);
+		lws.add((TL2Register<T>)r);
 	}
 	
 	public int getBirth() {
 		return birthDate;
 	}
+    
+    public boolean registerIsPresent(Register<T> register) {
+    	return lcx.contains(register);
+    }
+    
+    public Register<T> getLcx(int id){
+    	for(int i = 0; i < lcx.size(); ++i){
+    		if(lcx.get(i).getId() == id) {
+    			return lcx.get(id);
+    		}
+    	}
+    	return null;
+    }
+    
+	public boolean setLcx(Register<T> register) {
+		for(int i = 0; i < lcx.size(); ++i){
+    		if(lcx.get(i).getId() == register.getId()) {
+    			lcx.set(i, (TL2Register<T>)register);
+    			return true;
+    		}
+    	}
+		return false;
+		
+	}
 	
-    public <T> ArrayList<T> union(ArrayList<T> list1, ArrayList<T> list2) {
-        Set<T> set = new HashSet<T>();
-
-        set.addAll(list1);
-        set.addAll(list2);
-
-        return new ArrayList<T>(set);
-    }
+	public void setLcxValue(Register<T> register, T value) {
+		lcx.get(lcx.indexOf(register)).setValue(value);
+	}
     
-    public Register<T> getLcx() {
-    	return lcx;
-    }
-    
-    public void setLcx(Register<T> l) {
-    	lcx = (TL2Register) l;
+    public void addNewLcx(Register<T> register, T value) {
+    	TL2Register<T> r = (TL2Register<T>)register.copy();
+    	r.setValue(value);
+    	lcx.add((TL2Register<T>) r);
     }
 }

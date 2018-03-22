@@ -2,13 +2,13 @@
 public class Master {
 	
 	public static void increment (Register<Integer> x) {
-		Transaction t = new TL2Transaction();
+		Transaction<Integer> t = new TL2Transaction<Integer>();
 		while(!t.isCommited()) {
 			try{
 				t.begin();
-				x.write(t, (Integer) x.read(t) + 1);
-				System.out.println((String) x.read(t)); 
-				t.try_to_commit(); 
+				x.write(t, (Integer) x.read(t)+1);
+				t.try_to_commit();
+				System.out.println(Integer.toString(x.read(t))); 
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -17,10 +17,9 @@ public class Master {
 	
 	public static void main(String[] args) {
 		
-		Register<Integer> r = new TL2Register<Integer>();
+		Register<Integer> r = new TL2Register<Integer>(1);
 		increment(r);
-		
 		increment(r);
-		System.out.println(r);
+		increment(r);
 	}
 }
