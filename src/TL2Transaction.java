@@ -4,92 +4,68 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TL2Transaction implements Transaction<T>{
+public class TL2Transaction<T> implements Transaction<T>{
 
-	private static AtomicInteger clock;
-	private ArrayList<TL2Register> lrs;
-	private ArrayList<TL2Register> lws;
-	private ArrayList<TL2Register> lc;
+	private ArrayList<Register<T>> lrs;
+	private ArrayList<Register<T>> lws;
 	private int birthDate;
-	private boolean commited;
-
+	private static AtomicInteger clock;
+	private TL2Register lcx;
+	
 	public TL2Transaction() {
-		commited = false;
-		lrs = new ArrayList<int>();
-		lws = new ArrayList<int>();
+		
+		lrs = new ArrayList<Register<T>>();
+		lws = new ArrayList<Register<T>>();
 	}
-
+	
 	public void begin() {
 		birthDate = clock.get();
 	}
-
+	
 	public void try_to_commit() throws AbortException{
-		this.lockAll();
-		//Abort
-		for(TL2Register register : lrs) {
+		
+		for(Register<T> register : lrs) {
 			if(register.getDate() > birthDate) {
-				this.unlockAll();
+				
 				throw new AbortException();
 			}
 		}
-		//Updating registers
 		int commitDate = clock.getAndIncrement();
-		for(TL2Register register : lws) {
+		for(Register<T> register : lws) {
 			register.setValueAndDate(v, d);
 		}
-		this.commited = true;
-		//Unlocking
-		this.unlockAll();
 	}
-
-	private void lockAll() {
-		for(TL2Register register : lrs) {
-			register.lock();
-		}
-		for(TL2Register register : lws) {
-			register.lock();
-		}
-	}
-
-	private void unlockAll() {
-		for(TL2Register register : lrs) {
-			register.unlock();
-		}
-		for(TL2Register register : lws) {
-			register.unlock();
-		}
-	}
-
+	
 	public boolean isCommited() {
-		return commited;
+		return true;
 	}
-
-	public void addLrs(TL2Register r) {
+	
+	public void addLrs(Register<T> r) {
 		lrs.add(r);
 	}
-
-	public void addLws(TL2Register r) {
+	
+	public void addLws(Register<T> r) {
 		lws.add(r);
 	}
-
+	
 	public int getBirth() {
 		return birthDate;
 	}
+	
+    public <T> ArrayList<T> union(ArrayList<T> list1, ArrayList<T> list2) {
+        Set<T> set = new HashSet<T>();
 
-	public void addLcx(TL2Register x) {
-		lc.add(x.copy());
-	}
+        set.addAll(list1);
+        set.addAll(list2);
 
-	public void setLcx(TL2Register x, int value) {
-		int i = lc.indexOf(x);
-		if(i == -1) {
-			lc.add(x.copy());
-		}
-		lc.set(indexOf(x), value);
-	}
-
-	public TL2Register getLcx(TL2Register x) {
-		return lc.get(lc.indexOf(x));
-	}
-
+        return new ArrayList<T>(set);
+    }
+    
+    public Register<T> getLcx() {
+    	return lcx;
+    }
+    
+    public void setLcx(Register<T> l) {
+    	lcx = (TL2Register) l;
+    }
 }
