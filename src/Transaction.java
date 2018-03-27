@@ -1,5 +1,3 @@
-import java.util.Date;
-
 interface Transaction<T> {
 	
 	public void begin () ;

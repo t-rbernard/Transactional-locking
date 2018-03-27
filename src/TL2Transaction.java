@@ -1,7 +1,6 @@
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TL2Transaction<T> implements Transaction<T>{
@@ -25,6 +24,21 @@ public class TL2Transaction<T> implements Transaction<T>{
 	}
 	
 	public void try_to_commit() throws AbortException{
+		/*
+		Collections.sort(lws, new Comparator<TL2Register<T>>() {
+	        @Override 
+	        public int compare(TL2Register<T> r1, TL2Register<T> r2) {
+	            return r1.getId() - r2.getId();
+	        }
+	    });
+		
+		Collections.sort(lrs, new Comparator<TL2Register<T>>() {
+	        @Override 
+	        public int compare(TL2Register<T> r1, TL2Register<T> r2) {
+	            return r1.getId() - r2.getId();
+	        }
+	    });
+		*/
 		for(TL2Register<T> r1 : lws) 
 			if(!r1.isLocked()) r1.lock();
 		for(TL2Register<T> r2 : lrs) 
@@ -76,7 +90,7 @@ public class TL2Transaction<T> implements Transaction<T>{
     public Register<T> getLcx(int id){
     	for(int i = 0; i < lcx.size(); ++i){
     		if(lcx.get(i).getId() == id) {
-    			return lcx.get(id);
+    			return lcx.get(i);
     		}
     	}
     	return null;
@@ -98,8 +112,7 @@ public class TL2Transaction<T> implements Transaction<T>{
 	}
     
     public void addNewLcx(Register<T> register, T value) {
-    	TL2Register<T> r = (TL2Register<T>)register.copy();
-    	r.setValue(value);
-    	lcx.add((TL2Register<T>) r);
+    	register.setValue(value);
+    	lcx.add((TL2Register<T>) register);
     }
 }

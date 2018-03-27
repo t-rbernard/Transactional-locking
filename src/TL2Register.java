@@ -1,5 +1,4 @@
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class TL2Register<T> extends ReentrantLock implements Register<T>{
@@ -9,17 +8,10 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 	private int date;
 	private int id;
 	
-	public TL2Register() {
-		this.value = null;
-	}
 	
 	public TL2Register(T value) {
 		this.value = value;
-	}
-	
-	private TL2Register(T value, int date) {
-		this.value = value;
-		this.date = date;
+		this.date = 0;
 		this.id = idCounter.getAndIncrement();
 	}
 	
