@@ -24,7 +24,7 @@ public class TL2Transaction<T> implements Transaction<T>{
 	}
 	
 	public void try_to_commit() throws AbortException{
-		/*
+		
 		Collections.sort(lws, new Comparator<TL2Register<T>>() {
 	        @Override 
 	        public int compare(TL2Register<T> r1, TL2Register<T> r2) {
@@ -38,7 +38,7 @@ public class TL2Transaction<T> implements Transaction<T>{
 	            return r1.getId() - r2.getId();
 	        }
 	    });
-		*/
+		
 		for(TL2Register<T> r1 : lws) 
 			if(!r1.isLocked()) r1.lock();
 		for(TL2Register<T> r2 : lrs) 

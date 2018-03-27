@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 public class TL2Pile implements Runnable{
 	
 	private volatile boolean running;
@@ -7,7 +5,8 @@ public class TL2Pile implements Runnable{
 	Register<Integer> r2;
 
 	public TL2Pile(Register<Integer> x, Register<Integer> y) {
-		
+		r1 = x;
+		r2 = y;
 	}
 	
 	public static void increment (Register<Integer> x, Register<Integer> y){
@@ -35,24 +34,24 @@ public class TL2Pile implements Runnable{
 		}
 	}
 
-	public void run() throws InterruptedException {
+	public void run() {
 		running = true;
 		int i = 0;
 		while (i < 10){
 			System.out.println();
 			System.out.println(this);
-			increment(x,y);
-			Thread.sleep(10);
+			increment(r1,r2);
+			try {
+				Thread.sleep(10);
+			} catch (Exception e) {
+
+				e.printStackTrace();
+			}
 			++i;
 		}	
 	}
 	
 	public void stop() {
 		this.running = false;
-	}
-
-	@Override
-	public void run() {
-		
 	}
 }

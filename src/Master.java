@@ -39,17 +39,15 @@ public class Master {
 
 		Register<Integer> r1 = new TL2Register<Integer>(100);
 
-		TL2Pile pile1 = new TL2Pile();
-		TL2Pile pile2 = new TL2Pile();
+		TL2Pile pile1 = new TL2Pile(r0,r1);
+		TL2Pile pile2 = new TL2Pile(r0,r1);
 		
 		
 		try {
 			new Thread(pile1).start();
 			new Thread(pile2).start();
-			pile1.run(r0, r1);
-			pile2.run(r0, r1);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
+
 			e.printStackTrace();
 		}
 	}
