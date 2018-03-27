@@ -40,30 +40,30 @@ public class TL2Transaction<T> implements Transaction<T>{
 	    });
 		
 		for(TL2Register<T> r1 : lws) 
-			if(!r1.isLocked()) r1.lock();
+			if(!r1.isHeldByCurrentThread()) r1.lock();
 		for(TL2Register<T> r2 : lrs) 
-			if(!r2.isLocked()) r2.lock();
-		
+			if(!r2.isHeldByCurrentThread()) r2.lock();
 		
 		for(TL2Register<T> register : lrs) {
 			if(register.getDate() > birthDate) {
 				for(TL2Register<T> r1 : lws) 
-					if(r1.isLocked()) r1.unlock();
+					if(r1.isHeldByCurrentThread()) r1.unlock();
 				for(TL2Register<T> r2 : lrs) 
-					if(r2.isLocked()) r2.unlock();
-				throw new AbortException();
+					if(r2.isHeldByCurrentThread()) r2.unlock();
+				throw new AbortException("Aboooooooooooooooort Commit");
 			}
 		}
 		
 		int commitDate = clock.getAndIncrement();
+		
 		for(Register<T> register : lws) {
 			register.setValueAndDate(getLcx(register.getId()).getValue(), commitDate);
 		}
 		
 		for(TL2Register<T> r1 : lws) 
-			if(r1.isLocked()) r1.unlock();
+			if(r1.isHeldByCurrentThread()) r1.unlock();
 		for(TL2Register<T> r2 : lrs) 
-			if(r2.isLocked()) r2.unlock();
+			if(r2.isHeldByCurrentThread()) r2.unlock();
 		this.commited = true;
 	}
 	
@@ -82,10 +82,6 @@ public class TL2Transaction<T> implements Transaction<T>{
 	public int getBirth() {
 		return birthDate;
 	}
-    
-    public boolean registerIsPresent(Register<T> register) {
-    	return lcx.contains(register);
-    }
     
     public Register<T> getLcx(int id){
     	for(int i = 0; i < lcx.size(); ++i){

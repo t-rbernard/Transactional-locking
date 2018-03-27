@@ -1,7 +1,7 @@
 
 public class AbortException extends Exception {
 	
-	public AbortException() {
-		System.out.println("ABBBBBBBBBOOOOOOOORTTTTTTTTTTTTTTT");
+	public AbortException(String message) {
+		super(message);
 	}
 }

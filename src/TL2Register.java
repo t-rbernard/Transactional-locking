@@ -29,7 +29,7 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 			t.addLrs(this);
 
 			if(t.getLcx(id).getDate() > t.getBirth()) {
-				throw new AbortException();
+				throw new AbortException("Aboooooooooooooooort read");
 			}else {
 				return (T)t.getLcx(id).getValue();
 			}
@@ -38,7 +38,7 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 	
 	public void write(Transaction<T> t, T v) throws AbortException {
 		if(t.getLcx(id) == null){
-			t.addNewLcx(this, v);
+			t.addNewLcx(this.copy(), v);
 		}
 		
 		t.setLcxValue((TL2Register<T>)this, v);
@@ -46,7 +46,7 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 	}
 	
 	public Register<T> copy() {
-		return new TL2Register(this.value, this.date, this.id);
+		return new TL2Register<T>(this.value, this.date, this.id);
 	}
 	
 	public int getDate() {
