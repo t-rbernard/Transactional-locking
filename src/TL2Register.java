@@ -10,6 +10,7 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 	
 	
 	public TL2Register(T value) {
+		super(true);
 		this.value = value;
 		this.date = 0;
 		this.id = idCounter.getAndIncrement();
@@ -17,12 +18,16 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 	
 	// Used for making a copy of the register
 	private TL2Register(T value, int date, int id) {
+		super(true);
 		this.value = value;
 		this.date = date;
 		this.id = id;
 	}
 	
 	public T read (Transaction<T> t) throws AbortException{
+		
+		if(this.isLocked()) throw new AbortException();//"Register locked in READ"
+		
 		if(t.getLcx(id) != null) {
 			return (T)t.getLcx(id).getValue();
 		}else {
@@ -30,18 +35,21 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 			t.addLrs(this);
 
 			if(t.getLcx(id).getDate() > t.getBirth()) {
-				throw new AbortException("Aboooooooooooooooort read");
+				throw new AbortException();//"Aboooooooooooooooort read"
 			}else {
-				System.out.println(t + " I read this and I return value : " + t.getLcx(id).getValue());
+				//System.out.println(t + " I read this and I return value : " + t.getLcx(id).getValue());
 				return (T)t.getLcx(id).getValue();
 			}
 		}
 	}
 	
 	public void write(Transaction<T> t, T v) throws AbortException {
-		System.out.println(this.getOwner() + "  " + t + " on m'a donné la valeur : " + v);
+		
+		if(this.isLocked()) throw new AbortException();//"Register locked in WRITE"
+		
+		//System.out.println(this.getOwner() + "  " + t + " on m'a donné la valeur : " + v);
 		if(t.getLcx(id) == null){
-			System.out.println(t + "I'm here");
+			//System.out.println(t + "I'm here");
 			t.addNewLcx(this.copy(), v);
 		}
 		

@@ -26,7 +26,7 @@ public class TL2Pile implements Runnable{
 				x.write(t, (Integer) x.read(t)+1);
 				t.try_to_commit();
 			}catch(Exception e){
-				System.out.println(e.getMessage());
+				//e.printStackTrace();
 			}
 		}
 	}
@@ -42,7 +42,7 @@ public class TL2Pile implements Runnable{
 				y.write(t, (Integer) y.read(t)+1);
 				t.try_to_commit();
 			}catch(Exception e){
-				System.out.println(e.getMessage());
+				//e.printStackTrace();
 			}
 		}
 	}
@@ -51,8 +51,10 @@ public class TL2Pile implements Runnable{
 		this.running = true;
 
 		for(int i = 0; i < nbIt; ++i) {
-			increment(r0);
+			increment2(r0, r1);
+			increment2(r1, r0);
 		}
+		
 		//System.out.println(this + " r1 value : " + r1.getValue());
 		//System.out.println(this + " r1 date  : " + r1.getDate());
 	}
@@ -69,6 +71,7 @@ public class TL2Pile implements Runnable{
 		//System.out.println(this + " r1 date  : " + r1.getDate());
 	}
 	*/
+	
 	public void stop() {
 		this.running = false;
 	}

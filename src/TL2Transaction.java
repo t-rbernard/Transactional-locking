@@ -7,7 +7,7 @@ public class TL2Transaction<T> implements Transaction<T>{
 
 	private ArrayList<TL2Register<T>> lrs;
 	private ArrayList<TL2Register<T>> lws;
-	private ArrayList<TL2Register<T>> lcx;
+	public ArrayList<TL2Register<T>> lcx;
 	private int birthDate;
 	private static AtomicInteger clock = new AtomicInteger(0);
 	private boolean commited;
@@ -29,42 +29,29 @@ public class TL2Transaction<T> implements Transaction<T>{
 	
 	public void try_to_commit() throws AbortException{
 		
-		Collections.sort(lws, new Comparator<TL2Register<T>>() {
+		ArrayList<TL2Register<T>> allRegisters = new ArrayList<TL2Register<T>>(lws);
+		allRegisters.addAll(lrs);
+		
+		Collections.sort(allRegisters, new Comparator<TL2Register<T>>() {
 	        @Override 
 	        public int compare(TL2Register<T> r1, TL2Register<T> r2) {
 	            return r1.getId() - r2.getId();
 	        }
 	    });
-		
-		Collections.sort(lrs, new Comparator<TL2Register<T>>() {
-	        @Override 
-	        public int compare(TL2Register<T> r1, TL2Register<T> r2) {
-	            return r1.getId() - r2.getId();
-	        }
-	    });
-		
-		System.out.println(this + " try to lock lws");
-		for(TL2Register<T> r1 : lws) {
-			if(!r1.isHeldByCurrentThread()) r1.lock();
-		}
-		for(TL2Register<T> r1 : lws) 
-			System.out.println(this + " lws is locked : " + r1.isLocked());
-		
-		System.out.println(this + " try to lock lws");
-		for(TL2Register<T> r2 : lrs) {
-			if(!r2.isHeldByCurrentThread()) r2.lock();
-		}
-		for(TL2Register<T> r2 : lrs) 
-			System.out.println(this + " lrs is locked : " + r2.isLocked());
 
+		for(TL2Register<T> register : allRegisters) {
+			//System.out.println(this + " try to lock the registers");
+			register.lock();
+			//System.out.println(this + " registers are locked : " + registre.isHeldByCurrentThread());
+		}
 		
-		for(TL2Register<T> register : lrs) {
-			if(register.getDate() > birthDate) {
-				for(TL2Register<T> r1 : lws) 
-					if(r1.isHeldByCurrentThread()) r1.unlock();
-				for(TL2Register<T> r2 : lrs) 
-					if(r2.isHeldByCurrentThread()) r2.unlock();
-				throw new AbortException(this + " Aboooooooooooooooort Commit");
+		
+		for(TL2Register<T> lr : lrs) {
+			if(lr.getDate() > birthDate) {
+				for(TL2Register<T> register : allRegisters) 
+					if(register.isHeldByCurrentThread()) register.unlock();
+				commited = false;
+				throw new AbortException();//this + " Aboooooooooooooooort Commit"
 			}
 		}
 		
@@ -74,11 +61,8 @@ public class TL2Transaction<T> implements Transaction<T>{
 			register.setValueAndDate(getLcx(register.getId()).getValue(), commitDate);
 		}
 		
-		for(TL2Register<T> r1 : lws) 
-			if(r1.isHeldByCurrentThread()) r1.unlock();
-		for(TL2Register<T> r2 : lrs) 
-			if(r2.isHeldByCurrentThread()) r2.unlock();
-		System.out.println(this + " My commit is done");
+		for(TL2Register<T> register : allRegisters) 
+			if(register.isHeldByCurrentThread()) register.unlock();
 		this.commited = true;
 	}
 	
@@ -119,7 +103,7 @@ public class TL2Transaction<T> implements Transaction<T>{
 	
 	public void setLcxValue(int id, T value) {
 		for(int i = 0; i < lcx.size(); ++i){
-    		if(lcx.get(i).getId() == id) { 
+    		if(lcx.get(i).getId() == id) {
     			lcx.get(i).setValue(value);
     			return;
 			}
