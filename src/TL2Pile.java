@@ -54,23 +54,7 @@ public class TL2Pile implements Runnable{
 			increment2(r0, r1);
 			increment2(r1, r0);
 		}
-		
-		//System.out.println(this + " r1 value : " + r1.getValue());
-		//System.out.println(this + " r1 date  : " + r1.getDate());
 	}
-	
-	/*
-	public void run() {
-		this.running = true;
-		int i = 0;
-		while (i < 10){
-			increment(r0);
-			++i;
-		}
-		//System.out.println(this + " r1 value : " + r1.getValue());
-		//System.out.println(this + " r1 date  : " + r1.getDate());
-	}
-	*/
 	
 	public void stop() {
 		this.running = false;

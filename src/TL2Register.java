@@ -26,7 +26,7 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 	
 	public T read (Transaction<T> t) throws AbortException{
 		
-		if(this.isLocked()) throw new AbortException();//"Register locked in READ"
+		if(this.isLocked()) throw new AbortException("Register locked in READ");
 		
 		if(t.getLcx(id) != null) {
 			return (T)t.getLcx(id).getValue();
@@ -35,7 +35,7 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 			t.addLrs(this);
 
 			if(t.getLcx(id).getDate() > t.getBirth()) {
-				throw new AbortException();//"Aboooooooooooooooort read"
+				throw new AbortException("Aboooooooooooooooort read");
 			}else {
 				//System.out.println(t + " I read this and I return value : " + t.getLcx(id).getValue());
 				return (T)t.getLcx(id).getValue();
@@ -45,7 +45,7 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 	
 	public void write(Transaction<T> t, T v) throws AbortException {
 		
-		if(this.isLocked()) throw new AbortException();//"Register locked in WRITE"
+		if(this.isLocked()) throw new AbortException("Register locked in WRITE");
 		
 		//System.out.println(this.getOwner() + "  " + t + " on m'a donné la valeur : " + v);
 		if(t.getLcx(id) == null){

@@ -51,7 +51,7 @@ public class TL2Transaction<T> implements Transaction<T>{
 				for(TL2Register<T> register : allRegisters) 
 					if(register.isHeldByCurrentThread()) register.unlock();
 				commited = false;
-				throw new AbortException();//this + " Aboooooooooooooooort Commit"
+				throw new AbortException(this + " Aboooooooooooooooort Commit");
 			}
 		}
 		

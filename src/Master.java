@@ -4,38 +4,43 @@ public class Master {
 	
 	public static void main(String[] args) {
 		
-		System.out.println("BEGGGINNNN");
-		Register<Integer> r0 = new TL2Register<Integer>(0);
-		Register<Integer> r1 = new TL2Register<Integer>(10);
+		Register<Integer> register0 = new TL2Register<Integer>(0);
+		Register<Integer> register1 = new TL2Register<Integer>(10);
+		Register<Integer> register2 = new TL2Register<Integer>(10);
 		
-		ArrayList<TL2Pile> ArrayT = new ArrayList<TL2Pile>();
-		ArrayList<Thread> ArrayTh = new ArrayList<Thread>();
+		ArrayList<BankAccount> ArrayAccount = new ArrayList<BankAccount>();
+		ArrayList<Thread> ArrayThreads = new ArrayList<Thread>();
 		
-		int nbThread = 10;
+		int nbThread = 5;
+		
+		ArrayAccount.add(new BankAccount(register0, register1, register2, 1));
+		ArrayAccount.add(new BankAccount(register0, register1, register2, 2));
+		ArrayAccount.add(new BankAccount(register0, register1, register2, 3));
+		ArrayAccount.add(new BankAccount(register0, register1, register2, 2));
+		ArrayAccount.add(new BankAccount(register0, register1, register2, 3));
 		
 		for(int i = 0; i < nbThread; ++i) {
-			ArrayT.add(new TL2Pile(r0, r1, 1000));
-			ArrayTh.add(new Thread(ArrayT.get(i), "thread " + i));
+			ArrayThreads.add(new Thread(ArrayAccount.get(i), "Thread " + i));
 		}
 		
+		// We launch all of the threads
 		try {
 			for(int i = 0; i < nbThread; ++i) {
-				ArrayTh.get(i).start();
+				ArrayThreads.get(i).start();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {e.printStackTrace();}
+		
+		// We wait for all of the threads to complete 
 		for(int i = 0; i < nbThread; ++i) {
 			try {
-				ArrayTh.get(i).join();
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
+				ArrayThreads.get(i).join();
+			}catch(Exception e) {e.printStackTrace();}
 		}
-
-		System.out.println("r0 value : " + r0.getValue());
-		System.out.println("r0 date : " + r0.getDate());
-		System.out.println("r1 value : " + r1.getValue());
-		System.out.println("r1 date : " + r1.getDate());
+		System.out.println("r0 value : " + register0.getValue());
+		System.out.println("r0 date : " + register0.getDate());
+		System.out.println("r1 value : " + register1.getValue());
+		System.out.println("r1 date : " + register1.getDate());
+		System.out.println("r2 value : " + register2.getValue());
+		System.out.println("r2 date : " + register2.getDate());
 	}
 }
