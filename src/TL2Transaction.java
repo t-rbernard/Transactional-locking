@@ -20,7 +20,11 @@ public class TL2Transaction<T> implements Transaction<T>{
 	}
 	
 	public void begin() {
+		lcx.clear();
+		lrs.clear();
+		lws.clear();
 		birthDate = clock.get();
+		commited = false;
 	}
 	
 	public void try_to_commit() throws AbortException{
@@ -39,10 +43,20 @@ public class TL2Transaction<T> implements Transaction<T>{
 	        }
 	    });
 		
-		for(TL2Register<T> r1 : lws) 
+		System.out.println(this + " try to lock lws");
+		for(TL2Register<T> r1 : lws) {
 			if(!r1.isHeldByCurrentThread()) r1.lock();
-		for(TL2Register<T> r2 : lrs) 
+		}
+		for(TL2Register<T> r1 : lws) 
+			System.out.println(this + " lws is locked : " + r1.isLocked());
+		
+		System.out.println(this + " try to lock lws");
+		for(TL2Register<T> r2 : lrs) {
 			if(!r2.isHeldByCurrentThread()) r2.lock();
+		}
+		for(TL2Register<T> r2 : lrs) 
+			System.out.println(this + " lrs is locked : " + r2.isLocked());
+
 		
 		for(TL2Register<T> register : lrs) {
 			if(register.getDate() > birthDate) {
@@ -50,11 +64,11 @@ public class TL2Transaction<T> implements Transaction<T>{
 					if(r1.isHeldByCurrentThread()) r1.unlock();
 				for(TL2Register<T> r2 : lrs) 
 					if(r2.isHeldByCurrentThread()) r2.unlock();
-				throw new AbortException("Aboooooooooooooooort Commit");
+				throw new AbortException(this + " Aboooooooooooooooort Commit");
 			}
 		}
 		
-		int commitDate = clock.getAndIncrement();
+		int commitDate = clock.incrementAndGet();
 		
 		for(Register<T> register : lws) {
 			register.setValueAndDate(getLcx(register.getId()).getValue(), commitDate);
@@ -64,6 +78,7 @@ public class TL2Transaction<T> implements Transaction<T>{
 			if(r1.isHeldByCurrentThread()) r1.unlock();
 		for(TL2Register<T> r2 : lrs) 
 			if(r2.isHeldByCurrentThread()) r2.unlock();
+		System.out.println(this + " My commit is done");
 		this.commited = true;
 	}
 	
@@ -100,11 +115,15 @@ public class TL2Transaction<T> implements Transaction<T>{
     		}
     	}
 		return false;
-		
 	}
 	
-	public void setLcxValue(Register<T> register, T value) {
-		lcx.get(lcx.indexOf(register)).setValue(value);
+	public void setLcxValue(int id, T value) {
+		for(int i = 0; i < lcx.size(); ++i){
+    		if(lcx.get(i).getId() == id) { 
+    			lcx.get(i).setValue(value);
+    			return;
+			}
+		}
 	}
     
     public void addNewLcx(Register<T> register, T value) {

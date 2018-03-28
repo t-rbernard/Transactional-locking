@@ -15,6 +15,7 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 		this.id = idCounter.getAndIncrement();
 	}
 	
+	// Used for making a copy of the register
 	private TL2Register(T value, int date, int id) {
 		this.value = value;
 		this.date = date;
@@ -31,17 +32,20 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 			if(t.getLcx(id).getDate() > t.getBirth()) {
 				throw new AbortException("Aboooooooooooooooort read");
 			}else {
+				System.out.println(t + " I read this and I return value : " + t.getLcx(id).getValue());
 				return (T)t.getLcx(id).getValue();
 			}
 		}
 	}
 	
 	public void write(Transaction<T> t, T v) throws AbortException {
+		System.out.println(this.getOwner() + "  " + t + " on m'a donné la valeur : " + v);
 		if(t.getLcx(id) == null){
+			System.out.println(t + "I'm here");
 			t.addNewLcx(this.copy(), v);
 		}
 		
-		t.setLcxValue((TL2Register<T>)this, v);
+		t.setLcxValue(this.id, v);
 		t.addLws(this);
 	}
 	
