@@ -55,7 +55,7 @@ public class TL2RandString implements Runnable {
 		Random r = new Random();
 		
 		String s = "";
-	    String alphabet = "ivanromainloic";
+	    String alphabet = "ivan&romain&loic&jean-patrickmaurice";
 	    
 	    for (int i = 0; i < 5; i++) {
 	        s += alphabet.charAt(r.nextInt(alphabet.length()));

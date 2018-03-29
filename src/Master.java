@@ -53,10 +53,10 @@ public class Master {
 			//ArrayThreads.add(new Thread(ArrayAccount.get(i%7), "Thread " + i));
 			
 			// Pour effectuer les tests avec l'objet TL2RandString
-			/*
+			
 			ArrayRandString.add(new TL2RandString(stringRegs));
 			ArrayThreads.add(new Thread(ArrayRandString.get(i), "Thread " + i));
-			*/
+			
 		}
 		
 		// We launch all of the threads
