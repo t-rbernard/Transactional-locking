@@ -11,27 +11,29 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 	
 	public TL2Register(T value) {
 		super(true);
-		this.value = value;
 		this.date = 0;
+		this.value = value;
 		this.id = idCounter.getAndIncrement();
 	}
 	
 	// Used for making a copy of the register
 	private TL2Register(T value, int date, int id) {
 		super(true);
-		this.value = value;
 		this.date = date;
+		this.value = value;
 		this.id = id;
 	}
 	
 	public T read (Transaction<T> t) throws AbortException{
 		
-		if(this.isLocked()) throw new AbortException("Register locked in READ");
+		//if(this.isLocked()) throw new AbortException("Register locked in READ");
+
 		
 		if(t.getLcx(id) != null) {
 			return (T)t.getLcx(id).getValue();
 		}else {
-			t.addNewLcx(this.copy(), this.value);
+			
+			t.addNewLcx(this.copy());
 			t.addLrs(this);
 
 			if(t.getLcx(id).getDate() > t.getBirth()) {
@@ -40,12 +42,12 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 				//System.out.println(t + " I read this and I return value : " + t.getLcx(id).getValue());
 				return (T)t.getLcx(id).getValue();
 			}
-		}
+		}	
 	}
 	
 	public void write(Transaction<T> t, T v) throws AbortException {
 		
-		if(this.isLocked()) throw new AbortException("Register locked in WRITE");
+		//if(this.isLocked()) throw new AbortException("Register locked in WRITE");
 		
 		//System.out.println(this.getOwner() + "  " + t + " on m'a donné la valeur : " + v);
 		if(t.getLcx(id) == null){
@@ -65,6 +67,10 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 		return date;
 	}
 	
+	public void setDate(int d) {
+		date = d;
+	}
+	
 	public T getValue() {
 		return (T) value;
 	}
@@ -74,8 +80,8 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 	}
 	
 	public void setValueAndDate(T v, int d) {
-		value = v;
 		date = d;
+		value = v;
 	}
 	
 	public int getId() {

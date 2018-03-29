@@ -10,4 +10,5 @@ interface Transaction<T> {
 	public void setLcxValue(int id, T value);
 	public Register<T> getLcx(int id);
 	public void addNewLcx(Register<T> register, T  value);
+	public void addNewLcx(Register<T> register);
 }

@@ -114,4 +114,8 @@ public class TL2Transaction<T> implements Transaction<T>{
     	register.setValue(value);
     	lcx.add((TL2Register<T>) register);
     }
+    
+    public void addNewLcx(Register<T> register) {
+    	lcx.add((TL2Register<T>) register);
+    }
 }

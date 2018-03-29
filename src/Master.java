@@ -6,12 +6,13 @@ public class Master {
 		
 		Register<Integer> register0 = new TL2Register<Integer>(0);
 		Register<Integer> register1 = new TL2Register<Integer>(10);
-		Register<Integer> register2 = new TL2Register<Integer>(10);
+		Register<Integer> register2 = new TL2Register<Integer>(20);
 		
+		ArrayList<TL2Pile> ArrayTL2 = new ArrayList<TL2Pile>();
 		ArrayList<BankAccount> ArrayAccount = new ArrayList<BankAccount>();
 		ArrayList<Thread> ArrayThreads = new ArrayList<Thread>();
 		
-		int nbThread = 5;
+		int nbThread = 50;
 		
 		ArrayAccount.add(new BankAccount(register0, register1, register2, 1));
 		ArrayAccount.add(new BankAccount(register0, register1, register2, 2));
@@ -20,7 +21,9 @@ public class Master {
 		ArrayAccount.add(new BankAccount(register0, register1, register2, 3));
 		
 		for(int i = 0; i < nbThread; ++i) {
-			ArrayThreads.add(new Thread(ArrayAccount.get(i), "Thread " + i));
+			ArrayTL2.add(new TL2Pile(register0,100));
+			ArrayThreads.add(new Thread(ArrayTL2.get(i), "Thread " + i));
+			//ArrayThreads.add(new Thread(ArrayAccount.get(i), "Thread " + i));
 		}
 		
 		// We launch all of the threads

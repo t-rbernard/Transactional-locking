@@ -26,7 +26,7 @@ public class TL2Pile implements Runnable{
 				x.write(t, (Integer) x.read(t)+1);
 				t.try_to_commit();
 			}catch(Exception e){
-				//e.printStackTrace();
+				//System.out.println(e);
 			}
 		}
 	}
@@ -51,8 +51,8 @@ public class TL2Pile implements Runnable{
 		this.running = true;
 
 		for(int i = 0; i < nbIt; ++i) {
-			increment2(r0, r1);
-			increment2(r1, r0);
+			increment(r0);
+
 		}
 	}
 	
