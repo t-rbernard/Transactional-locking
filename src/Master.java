@@ -3,14 +3,14 @@ import java.util.ArrayList;
 public class Master {
 	
 	public static void main(String[] args) {
-		/*
-		// Registres pour le jeux de test TL2Increment (plus adaptés)
+		//* Retirer ou ajouter un slash pour changer de set de registres
+		// Registres pour le jeu de test TL2Increment (plus adaptés)
 		Register<Integer> register0 = new TL2Register<Integer>(0);
 		Register<Integer> register1 = new TL2Register<Integer>(10);
 		Register<Integer> register2 = new TL2Register<Integer>(20);
 		
 		/*/
-		// Registres pour le jeux de test TL2BankAccount (plus adaptés)
+		// Registres pour le jeu de test TL2BankAccount (plus adaptés)
 		Register<Integer> register0 = new TL2Register<Integer>(5000);
 		Register<Integer> register1 = new TL2Register<Integer>(1000);
 		Register<Integer> register2 = new TL2Register<Integer>(2000);
