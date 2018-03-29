@@ -44,19 +44,19 @@ public class Master {
 		for(int i = 0; i < nbThread; ++i) {
 			
 			// Pour effectuer les tests avec l'objet TL2Increment
-			/*
+			
 			ArrayIncrement.add(new TL2Increment(register0, register1, 100));
 			ArrayThreads.add(new Thread(ArrayIncrement.get(i), "Thread " + i));
-			*/
+			
 			
 			// Pour effectuer les tests avec l'objet TL2BankAccount
 			//ArrayThreads.add(new Thread(ArrayAccount.get(i%7), "Thread " + i));
 			
 			// Pour effectuer les tests avec l'objet TL2RandString
-			
+			/*
 			ArrayRandString.add(new TL2RandString(stringRegs));
 			ArrayThreads.add(new Thread(ArrayRandString.get(i), "Thread " + i));
-			
+			*/
 		}
 		
 		// We launch all of the threads
