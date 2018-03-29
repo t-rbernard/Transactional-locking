@@ -1,5 +1,5 @@
 /* This object have been created for the only purpose of debugging
- * It the implementation of the method increment present in the project's subject
+ * There is the implementation of the method increment present in the project's subject
  * A second method, increment2 have been created for testing if the implementation of 
  * the function try_to_commit is deadlock-free
  * 
@@ -27,6 +27,7 @@ public class TL2Increment implements Runnable{
 		nbIt = it;
 	}
 	
+	// Function use to increment only one register
 	public static void increment(Register<Integer> x){
 		
 		Transaction<Integer> t = new TL2Transaction<Integer>();
@@ -42,6 +43,7 @@ public class TL2Increment implements Runnable{
 		}
 	}
 	
+	// Function use to increment two register
 	public static void increment2(Register<Integer> x, Register<Integer> y){
 		
 		Transaction<Integer> t = new TL2Transaction<Integer>();

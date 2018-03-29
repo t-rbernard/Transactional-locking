@@ -1,3 +1,8 @@
+/* This object have been created in the need of the project and is a classical object
+ * 
+ * @author Romain Bernard, Loïc Boutin, Ivan Dromigny
+ * 
+ */
 
 public class TL2BankAccount implements Runnable {
 
@@ -87,6 +92,7 @@ public class TL2BankAccount implements Runnable {
 		this.running = true;
 		
 		//System.out.println("Balance before operation : \n" + getBalances());
+		// Different actions happened function of the choice
 		switch(choice) {
 			case 1:
 				for(int i = 0; i < 5; ++i) {
