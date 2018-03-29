@@ -26,7 +26,7 @@ public class TL2Register<T> extends ReentrantLock implements Register<T>{
 	
 	public T read (Transaction<T> t) throws AbortException{
 		
-		//if(this.isLocked()) throw new AbortException("Register locked in READ");
+		if(this.isLocked()) throw new AbortException("Register locked in READ");
 
 		
 		if(t.getLcx(id) != null) {
